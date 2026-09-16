@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">USSD Automation</string>
+    <string name="status_device_online">Device en ligne</string>
+    <string name="status_device_offline">Device hors ligne</string>
+    <string name="status_transactions">Transactions exécutées</string>
+    <string name="status_no_operation">Aucune opération traitée pour l\'instant</string>
+    <string name="status_open_sim_slots">Voir les puces SIM</string>
+    <string name="badge_deposit">DÉPÔT</string>
+    <string name="badge_withdraw">RETRAIT</string>
+    <string name="sim_slots_title">Puces SIM</string>
+    <string name="sim_slots_empty">Aucune configuration SIM synchronisée</string>
+    <string name="sim_slots_active">Active</string>
+    <string name="sim_slots_inactive">Inactive</string>
+    <string name="sim_slots_mismatch_title">Écarts détectés</string>
+    <string name="sim_slots_no_mismatch">SIM physiques conformes à la configuration</string>
+</resources>

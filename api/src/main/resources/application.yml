@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: ussd-automation-api
+  profiles:
+    active: dev
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: 8080
+
+ussd-automation:
+  transaction:
+    timeout-seconds: 90
+    timeout-job-fixed-delay-ms: 30000
+  firebase:
+    credentials-path: ${FIREBASE_CREDENTIALS_PATH:classpath:firebase-service-account.json}
+  security:
+    merchant-api-key: ${MERCHANT_API_KEY:changeme-dev-only}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ussd_automation
+    username: ussd_automation
+    password: ussd_automation
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    com.ussdauto.api: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+logging:
+  level:
+    com.ussdauto.api: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:ussd_automation;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect

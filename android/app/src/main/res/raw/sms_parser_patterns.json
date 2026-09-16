@@ -1,0 +1,20 @@
+{
+  "MTN": {
+    "senders": ["MTN", "MTNMoney", "36160"],
+    "operationKeywords": {
+      "DEPOSIT": "d[ée]p[oô]t",
+      "WITHDRAW": "retrait"
+    },
+    "successPattern": "(?is)vous avez (?:re[cç]u un|effectu[ée] un[e]?)\\s+(?<operation>d[ée]p[oô]t|retrait).*?(?<montant>[0-9]+(?:[.,][0-9]{1,2})?)\\s*(?:XAF|FCFA).*?(?:ID|Id|r[ée]f(?:[ée]rence)?)\\s*[:\\s]\\s*(?<reference>[A-Za-z0-9.\\-]+)",
+    "failurePattern": "(?is)(?:[ée]chec|solde insuffisant|transaction annul[ée]e|refus[ée]e)"
+  },
+  "ORANGE": {
+    "senders": ["ORANGE", "OrangeMoney", "Orange_Money", "8300"],
+    "operationKeywords": {
+      "DEPOSIT": "d[ée]p[oô]t|rechargement",
+      "WITHDRAW": "retrait"
+    },
+    "successPattern": "(?is)(?<operation>d[ée]p[oô]t|retrait) de\\s+(?<montant>[0-9]+(?:[.,][0-9]{1,2})?)\\s*(?:XAF|FCFA)\\s+effectu[ée].*?(?:transaction|r[ée]f[ée]rence)\\s*(?:n[°o]?)?\\s*[:\\s]\\s*(?<reference>[A-Za-z0-9.\\-]+)",
+    "failurePattern": "(?is)(?:[ée]chec|solde insuffisant|transaction annul[ée]e|refus[ée]e)"
+  }
+}

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Recevoir le SMS de confirmation de l'opérateur en temps réel -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <!-- Lire les SMS existants si besoin de re-scanner la boîte de réception -->
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <!-- Composer le code USSD marchand (TelephonyManager.sendUssdRequest) -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <!-- Lister les SIM actives par slot (SubscriptionManager) pour cibler la bonne puce -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- Appeler l'API (commande FCM entrante + callback de résultat sortant) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Exécuter la commande USSD dans un service au premier plan, même écran éteint -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
+    <!-- Redémarrer l'écoute FCM après reboot de l'appareil dédié -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Empêcher la mise en veille du modem/CPU pendant l'exécution d'une commande -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application
+        android:name=".UssdAutomationApp"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.UssdAutomation"
+        android:usesCleartextTraffic="false">
+
+        <activity
+            android:name=".ui.status.StatusActivity"
+            android:exported="true"
+            android:theme="@style/Theme.UssdAutomation">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.simslots.SimSlotsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.UssdAutomation" />
+
+        <service
+            android:name=".service.UssdFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".service.UssdExecutionForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="phoneCall" />
+
+        <receiver
+            android:name=".data.sms.SmsReceiver"
+            android:exported="true"
+            android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter android:priority="999">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- WorkManager est initialisé manuellement via UssdAutomationApp (Configuration.Provider)
+             pour que les Workers puissent être injectés par Hilt (HiltWorkerFactory). -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
+    </application>
+
+</manifest>
