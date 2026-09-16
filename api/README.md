@@ -242,3 +242,25 @@ de 90s basculent en `TIMEOUT` (avec entrée d'historique), et leur device est li
 Voir `src/main/java/com/ussdauto/api/domain/entity` :
 `Transaction`, `TransactionStatusHistory` (append-only), `Device`, `DeviceSimSlot`,
 `UssdTemplate`.
+
+## CI/CD
+
+Workflows GitHub Actions définis à la racine du repo (`.github/workflows/`, requis pour
+être pris en compte — un workflow placé dans `api/.github/` n'est pas exécuté), filtrés
+sur les changements dans `api/**` :
+
+- **`api-ci.yml`** — sur chaque push/PR : `mvn test` (profil `test`, H2 en mémoire,
+  aucune dépendance externe). Publie les rapports Surefire en artefact.
+- **`api-cd.yml`** — sur push vers `main` ou tag `v*` : rejoue les tests, puis build et
+  push l'image Docker (`api/Dockerfile`, build multi-stage Maven → JRE) vers Docker Hub
+  (`docker.io/$DOCKERHUB_NAMESPACE/ussd-auto:latest` et `:<tag>`).
+
+Secrets requis côté GitHub (Settings → Secrets and variables → Actions) :
+`DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, `DOCKERHUB_NAMESPACE`.
+
+Build/lancement de l'image en local :
+
+```bash
+docker build -t ussd-auto:local ./api
+docker run -p 8080:8080 --env-file api/.env ussd-auto:local
+```
