@@ -27,14 +27,17 @@ docker compose up -d
 
 ## 3. Schéma additionnel (première installation)
 
-Le `ddl-auto: validate` du profil `prod` ne crée pas les tables : elles doivent déjà
-exister (créées une fois via le profil `dev`/`update`, ou manuellement), puis complétées
-par les scripts de `../api/db/` :
+Le profil `prod` utilise `ddl-auto: update` : les tables sont créées automatiquement au
+premier démarrage (comme en `dev`). Une fois l'API démarrée avec succès, compléter avec
+les scripts de `../api/db/` :
 
 ```bash
 docker compose exec -T postgres psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" < ../api/db/schema-extra.sql
 docker compose exec -T postgres psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" < ../api/db/seed-ussd-templates.sql
 ```
+
+`schema-extra.sql` crée un index unique partiel non exprimable via `ddl-auto: update`
+(idempotent, `IF NOT EXISTS`).
 
 ## 4. Mise à jour
 
