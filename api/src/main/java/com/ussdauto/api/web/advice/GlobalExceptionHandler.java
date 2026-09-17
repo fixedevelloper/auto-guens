@@ -1,5 +1,6 @@
 package com.ussdauto.api.web.advice;
 
+import com.ussdauto.api.exception.DeviceAuthMismatchException;
 import com.ussdauto.api.exception.DeviceNotFoundException;
 import com.ussdauto.api.exception.InvalidStatusTransitionException;
 import com.ussdauto.api.exception.InvalidTransactionStateException;
@@ -51,6 +52,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidTransactionStateException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidState(InvalidTransactionStateException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body(HttpStatus.FORBIDDEN, ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(DeviceAuthMismatchException.class)
+    public ResponseEntity<Map<String, Object>> handleDeviceAuthMismatch(DeviceAuthMismatchException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body(HttpStatus.FORBIDDEN, ex.getMessage(), null));
     }
 

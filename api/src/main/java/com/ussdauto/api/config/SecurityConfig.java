@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/transactions/*/status").hasRole("DEVICE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/devices/*").hasRole("DEVICE")
                         .requestMatchers(HttpMethod.GET, "/api/devices/*/sim-slots").hasAnyRole("MERCHANT", "DEVICE")
                         .requestMatchers("/api/**").hasRole("MERCHANT")
                         .anyRequest().authenticated()

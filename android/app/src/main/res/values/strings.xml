@@ -13,4 +13,10 @@
     <string name="sim_slots_inactive">Inactive</string>
     <string name="sim_slots_mismatch_title">Écarts détectés</string>
     <string name="sim_slots_no_mismatch">SIM physiques conformes à la configuration</string>
+    <string name="status_open_device_setup">Configurer l\'appareil</string>
+    <string name="device_setup_title">Configuration de l\'appareil</string>
+    <string name="device_setup_device_id">deviceId</string>
+    <string name="device_setup_api_key">apiKey</string>
+    <string name="device_setup_save">Enregistrer et synchroniser</string>
+    <string name="device_setup_saving">Synchronisation…</string>
 </resources>

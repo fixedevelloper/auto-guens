@@ -59,6 +59,7 @@ import com.ussdauto.android.R
 import com.ussdauto.android.domain.model.LocalTransaction
 import com.ussdauto.android.domain.model.OperationType
 import com.ussdauto.android.domain.model.TransactionStatusLocal
+import com.ussdauto.android.ui.devicesetup.DeviceSetupActivity
 import com.ussdauto.android.ui.simslots.SimSlotsActivity
 import com.ussdauto.android.ui.theme.UssdAutomationTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -137,6 +138,16 @@ private fun StatusScreen(state: StatusUiState) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = stringResource(R.string.status_open_sim_slots))
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedButton(
+                onClick = { context.startActivity(Intent(context, DeviceSetupActivity::class.java)) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(text = stringResource(R.string.status_open_device_setup))
             }
 
             Spacer(modifier = Modifier.height(24.dp))

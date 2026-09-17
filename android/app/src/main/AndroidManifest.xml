@@ -44,6 +44,11 @@
             android:exported="false"
             android:theme="@style/Theme.UssdAutomation" />
 
+        <activity
+            android:name=".ui.devicesetup.DeviceSetupActivity"
+            android:exported="false"
+            android:theme="@style/Theme.UssdAutomation" />
+
         <service
             android:name=".service.UssdFirebaseMessagingService"
             android:exported="false">

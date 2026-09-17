@@ -212,6 +212,43 @@ PUT /api/ussd-templates/{id}
 Créer un nouveau template pour un couple `(operator, operationType)` désactive
 automatiquement l'ancien template actif de ce couple (l'historique reste consultable).
 
+### Devices
+
+```http
+POST /api/devices
+X-Api-Key: une-cle-secrete-longue
+```
+
+Réponse `201 Created` — `apiKey` n'est renvoyée qu'à cet instant, à conserver côté app
+Android (elle sert de `X-Device-Api-Key` pour ses appels) :
+
+```json
+{
+  "id": "a0f1c912-0323-43ca-9029-7db149d52a9b",
+  "apiKey": "8mZ...longue-chaine-aleatoire...",
+  "statut": "OFFLINE",
+  "createdAt": "2026-09-17T09:00:00Z",
+  "updatedAt": "2026-09-17T09:00:00Z"
+}
+```
+
+L'app Android enregistre ensuite (et réenregistre à chaque changement) son token FCM :
+
+```http
+PATCH /api/devices/{deviceId}
+X-Device-Api-Key: <clé du device>
+Content-Type: application/json
+
+{ "fcmToken": "..." }
+```
+
+Fait passer le device `OFFLINE` → `ONLINE` (sans effet s'il est `BUSY`, en cours de
+transaction) et met à jour `lastSeenAt`. `403` si la clé fournie n'est pas celle de ce
+device précis.
+
+Aucun self-service : c'est le marchand qui provisionne chaque device puis configure
+l'app avec l'`id` et l'`apiKey` obtenus. Ensuite, déclarer ses puces SIM :
+
 ### Puces SIM
 
 ```http

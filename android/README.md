@@ -115,9 +115,11 @@ l'API. Pour mettre en service un appareil :
 
 1. Créer manuellement la ligne `Device` côté API (apiKey, token FCM) et sa config
    `DeviceSimSlot` (`POST /api/devices/{deviceId}/sim-slots`).
-2. Sur l'appareil, renseigner `deviceId` et `apiKey` dans `DeviceCredentialsStore`
-   (`data/local/DeviceCredentialsStore.kt`) — via un écran d'admin à ajouter, ou en dur
-   au premier lancement pour un parc de test.
+2. Sur l'appareil, ouvrir l'écran « Configurer l'appareil » depuis `StatusActivity`
+   (`ui.devicesetup.DeviceSetupActivity`) et y saisir `deviceId` et `apiKey`. Ils sont
+   persistés dans `DeviceCredentialsStore` (`data/local/DeviceCredentialsStore.kt`) et une
+   synchronisation (`syncFromRemote`) est déclenchée immédiatement pour peupler la config
+   SIM locale.
 3. Le token FCM (`onNewToken`) doit être communiqué à l'API pour tenir `Device.fcmToken`
    à jour — extension future documentée dans le code, hors périmètre des endpoints
    actuels.
