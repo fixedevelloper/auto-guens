@@ -8,6 +8,7 @@ import com.ussdauto.android.data.remote.dto.TransactionCommandPayload.Companion.
 import com.ussdauto.android.data.remote.dto.TransactionCommandPayload.Companion.MESSAGE_TYPE_KEY
 import com.ussdauto.android.data.remote.dto.TransactionCommandPayload.Companion.MESSAGE_TYPE_SIM_CONFIG_UPDATED
 import com.ussdauto.android.domain.model.TransactionStatusLocal
+import com.ussdauto.android.domain.repository.DeviceRegistrationRepository
 import com.ussdauto.android.domain.repository.TransactionLocalRepository
 import com.ussdauto.android.domain.sim.SimSlotManager
 import com.ussdauto.android.domain.status.StatusNotifier
@@ -31,6 +32,7 @@ class UssdFirebaseMessagingService : FirebaseMessagingService() {
     @Inject lateinit var transactionLocalRepository: TransactionLocalRepository
     @Inject lateinit var statusNotifier: StatusNotifier
     @Inject lateinit var simSlotManager: SimSlotManager
+    @Inject lateinit var deviceRegistrationRepository: DeviceRegistrationRepository
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -84,8 +86,10 @@ class UssdFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Timber.i("Nouveau token FCM généré")
-        // Point d'extension : transmettre ce token à l'API pour mettre à jour Device.fcmToken.
-        // Aucun endpoint de (ré)enregistrement de device n'est défini dans le périmètre actuel
-        // de l'API — le token est aujourd'hui provisionné manuellement en base au setup du device.
+
+        serviceScope.launch {
+            deviceRegistrationRepository.registerFcmToken(token)
+                .onFailure { Timber.w(it, "Échec de l'enregistrement du nouveau token FCM") }
+        }
     }
 }

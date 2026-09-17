@@ -38,6 +38,22 @@ services:
     networks:
       - internal
 
+  web:
+    image: docker.io/${DOCKERHUB_NAMESPACE}/ussd-web:${WEB_IMAGE_TAG:-latest}
+    container_name: ussd-automation-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      API_BASE_URL: http://api:8089
+      MERCHANT_API_KEY: ${MERCHANT_API_KEY}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SESSION_SECRET: ${SESSION_SECRET}
+    ports:
+      - "127.0.0.1:${WEB_PORT:-3000}:3000"
+    networks:
+      - internal
+
 volumes:
   pgdata:
 

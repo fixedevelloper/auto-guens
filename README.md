@@ -1,7 +1,7 @@
 # Automatisation USSD — Paiements mobile money (multi-SIM)
 
 Système d'automatisation de paiements mobile money (**DEPOSIT** / **WITHDRAW**) composé
-de deux projets :
+de trois projets :
 
 - [`api/`](api/README.md) — orchestrateur Spring Boot : reçoit les demandes d'opération,
   résout le code USSD marchand à composer, sélectionne un appareil Android disponible
@@ -12,6 +12,8 @@ de deux projets :
   appareils Android dédiés : crée sa copie locale (Room) de la transaction, compose le
   code USSD reçu sur la bonne puce, écoute et analyse le SMS de confirmation, puis
   notifie l'API à chaque changement de statut.
+- [`web/`](web/README.md) — administration Next.js (accès par mot de passe) pour
+  provisionner les devices/puces SIM et consulter les transactions traitées par l'API.
 
 ## Flux global
 

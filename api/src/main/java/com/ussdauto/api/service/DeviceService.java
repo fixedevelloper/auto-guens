@@ -6,12 +6,14 @@ import com.ussdauto.api.exception.DeviceAuthMismatchException;
 import com.ussdauto.api.exception.DeviceNotFoundException;
 import com.ussdauto.api.repository.DeviceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.List;
 import java.util.UUID;
 
 /** Provisionne les devices Android : aucun self-service, un marchand crée le device puis
@@ -32,6 +34,16 @@ public class DeviceService {
                 .build();
 
         return deviceRepository.save(device);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Device> list() {
+        return deviceRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+    }
+
+    @Transactional(readOnly = true)
+    public Device getById(UUID id) {
+        return deviceRepository.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
     }
 
     /** Appelé par le device lui-même (X-Device-Api-Key) pour (ré)enregistrer son token FCM

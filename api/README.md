@@ -242,6 +242,14 @@ Content-Type: application/json
 { "fcmToken": "..." }
 ```
 
+```http
+GET /api/devices
+X-Api-Key: une-cle-secrete-longue
+```
+
+Liste tous les devices (`DeviceSummaryResponse`, sans `apiKey`/`fcmToken` — non
+réexposés après la création), triés par `createdAt` décroissant.
+
 Fait passer le device `OFFLINE` → `ONLINE` (sans effet s'il est `BUSY`, en cours de
 transaction) et met à jour `lastSeenAt`. `403` si la clé fournie n'est pas celle de ce
 device précis.
@@ -301,3 +309,15 @@ Build/lancement de l'image en local :
 docker build -t ussd-auto:local ./api
 docker run -p 8080:8080 --env-file api/.env ussd-auto:local
 ```
+curl -X POST https://ussd.guens.org/api/devices -H "X-Api-Key: $MERCHANT_API_KEY"
+
+{"id":"511bf74e-8441-46cb-9ee2-8537ca3540f7","apiKey":"wJmwX6MY062l6CEBUDXLrJ-IhKnqyKpE4R4DDXBgSrE",
+"statut":"OFFLINE","createdAt":"2026-09-17T08:37:49.123736832Z","updatedAt":"2026-09-17T08:37:49.123736832Z"}
+
+curl -X POST https://ussd.guens.org/api/devices/511bf74e-8441-46cb-9ee2-8537ca3540f7/sim-slots \
+-H "X-Api-Key: guens" \
+-H "Content-Type: application/json" \
+-d '[
+{ "slotIndex": 0, "operator": "MTN", "phoneNumberOnSim": "677000000" },
+{ "slotIndex": 1, "operator": "ORANGE", "phoneNumberOnSim": "690000000" }
+]'

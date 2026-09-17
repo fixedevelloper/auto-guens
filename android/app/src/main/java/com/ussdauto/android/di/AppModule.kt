@@ -1,5 +1,6 @@
 package com.ussdauto.android.di
 
+import com.ussdauto.android.data.repository.DeviceRegistrationRepositoryImpl
 import com.ussdauto.android.data.repository.StatusCallbackRepositoryImpl
 import com.ussdauto.android.data.repository.TransactionLocalRepositoryImpl
 import com.ussdauto.android.data.sim.ActiveSimProvider
@@ -9,6 +10,7 @@ import com.ussdauto.android.data.sms.parser.MtnSmsParser
 import com.ussdauto.android.data.sms.parser.OrangeSmsParser
 import com.ussdauto.android.data.status.StatusNotifierImpl
 import com.ussdauto.android.data.ussd.UssdExecutorImpl
+import com.ussdauto.android.domain.repository.DeviceRegistrationRepository
 import com.ussdauto.android.domain.repository.StatusCallbackRepository
 import com.ussdauto.android.domain.repository.TransactionLocalRepository
 import com.ussdauto.android.domain.sim.SimSlotManager
@@ -30,6 +32,9 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindStatusCallbackRepository(impl: StatusCallbackRepositoryImpl): StatusCallbackRepository
+
+    @Binds
+    abstract fun bindDeviceRegistrationRepository(impl: DeviceRegistrationRepositoryImpl): DeviceRegistrationRepository
 
     @Binds
     abstract fun bindStatusNotifier(impl: StatusNotifierImpl): StatusNotifier

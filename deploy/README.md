@@ -1,15 +1,18 @@
 # Déploiement serveur
 
-`docker-compose.yml` de production : API (image publiée par `api-cd.yml`) + PostgreSQL.
+`docker-compose.yml` de production : API (image publiée par `api-cd.yml`) + Web admin
+(image publiée par `web-cd.yml`) + PostgreSQL.
 
 Le reverse proxy public (TLS/Certbot compris) est le **Nginx système** du serveur, pas un
-service dockerisé — l'API n'est publiée que sur `127.0.0.1:${API_PORT}`, jamais sur
-`0.0.0.0`. `API_PORT` doit être identique à `server.port` dans
+service dockerisé — aucun conteneur n'est publié sur `0.0.0.0`, seulement sur
+`127.0.0.1`. `API_PORT` doit être identique à `server.port` dans
 `api/src/main/resources/application.yml` (actuellement **8089** sur ce serveur — le 8080
-par défaut de Spring Boot y est déjà occupé par un autre service). Exemple de bloc
-`location` côté Nginx système :
+par défaut de Spring Boot y est déjà occupé par un autre service).
+
+Exemple de blocs `location`/`server` côté Nginx système, un sous-domaine par service :
 
 ```nginx
+# API — ussd.guens.org
 location / {
     proxy_pass http://127.0.0.1:8089;
     proxy_set_header Host              $host;
@@ -24,16 +27,31 @@ location /actuator/health {
 }
 ```
 
+```nginx
+# Web admin — admin.guens.org (ou un autre sous-domaine dédié)
+location / {
+    proxy_pass http://127.0.0.1:3000;
+    proxy_set_header Host              $host;
+    proxy_set_header X-Real-IP         $remote_addr;
+    proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+
 ## 1. Configuration
 
 ```bash
 cp .env.example .env
 # éditer .env : POSTGRES_PASSWORD, MERCHANT_API_KEY, DOCKERHUB_NAMESPACE,
-#               FIREBASE_CREDENTIALS_FILE
+#               FIREBASE_CREDENTIALS_FILE, ADMIN_PASSWORD, SESSION_SECRET
 ```
 
 `FIREBASE_CREDENTIALS_FILE` doit pointer vers le JSON de compte de service Firebase
 présent sur le serveur (hors repo, jamais committé).
+
+`ADMIN_PASSWORD` (mot de passe unique de connexion à l'admin web) et `SESSION_SECRET`
+(signature du cookie de session, ex. `openssl rand -base64 32`) doivent être des valeurs
+fortes et différentes de tout autre secret du projet.
 
 ## 2. Démarrage
 
@@ -59,8 +77,8 @@ docker compose exec -T postgres psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" < ../
 ## 4. Mise à jour
 
 ```bash
-docker compose pull api
-docker compose up -d api
+docker compose pull api web
+docker compose up -d api web
 ```
 
 ## 5. Logs / état
@@ -68,4 +86,5 @@ docker compose up -d api
 ```bash
 docker compose ps
 docker compose logs -f api
+docker compose logs -f web
 ```

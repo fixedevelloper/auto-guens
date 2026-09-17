@@ -2,10 +2,12 @@ package com.ussdauto.android.data.remote
 
 import com.ussdauto.android.data.remote.dto.SimSlotDto
 import com.ussdauto.android.data.remote.dto.StatusCallbackDto
+import com.ussdauto.android.data.remote.dto.UpdateFcmTokenDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -23,4 +25,11 @@ interface ApiService {
         @Path("deviceId") deviceId: String,
         @Header("X-Device-Api-Key") deviceApiKey: String
     ): Response<List<SimSlotDto>>
+
+    @PATCH("api/devices/{deviceId}")
+    suspend fun updateFcmToken(
+        @Path("deviceId") deviceId: String,
+        @Header("X-Device-Api-Key") deviceApiKey: String,
+        @Body body: UpdateFcmTokenDto
+    ): Response<Unit>
 }
