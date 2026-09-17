@@ -30,7 +30,7 @@ location /actuator/health {
 ```nginx
 # Web admin — admin.guens.org (ou un autre sous-domaine dédié)
 location / {
-    proxy_pass http://127.0.0.1:3000;
+    proxy_pass http://127.0.0.1:3030;
     proxy_set_header Host              $host;
     proxy_set_header X-Real-IP         $remote_addr;
     proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;

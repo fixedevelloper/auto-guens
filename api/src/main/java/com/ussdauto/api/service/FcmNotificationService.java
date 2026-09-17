@@ -26,6 +26,10 @@ public class FcmNotificationService {
     private final FirebaseMessaging firebaseMessaging;
 
     public void sendCommand(Device device, Transaction transaction, String ussdCode, int simSlotIndex) {
+        if (!hasFcmToken(device, "commande de transaction " + transaction.getId())) {
+            return;
+        }
+
         Message message = Message.builder()
                 .setToken(device.getFcmToken())
                 .putData(MESSAGE_TYPE_KEY, MESSAGE_TYPE_COMMAND)
@@ -45,12 +49,27 @@ public class FcmNotificationService {
     }
 
     public void sendSimConfigUpdated(Device device) {
+        if (!hasFcmToken(device, "notification SIM_CONFIG_UPDATED pour device " + device.getId())) {
+            return;
+        }
+
         Message message = Message.builder()
                 .setToken(device.getFcmToken())
                 .putData(MESSAGE_TYPE_KEY, MESSAGE_TYPE_SIM_CONFIG_UPDATED)
                 .build();
 
         send(message, "notification SIM_CONFIG_UPDATED pour device " + device.getId());
+    }
+
+    /** Device pas encore enregistré côté FCM (PATCH /api/devices/{id} jamais appelé) : on
+     * n'échoue pas l'opération appelante pour autant, elle recevra la config au premier
+     * heartbeat FCM du device. */
+    private boolean hasFcmToken(Device device, String description) {
+        if (device.getFcmToken() == null || device.getFcmToken().isBlank()) {
+            log.warn("FCM ignoré, device sans token enregistré ({})", description);
+            return false;
+        }
+        return true;
     }
 
     private void send(Message message, String description) {

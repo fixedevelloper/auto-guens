@@ -10,6 +10,7 @@ import com.ussdauto.api.exception.TransactionNotFoundException;
 import com.ussdauto.api.exception.UssdTemplateNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -28,6 +29,11 @@ public class GlobalExceptionHandler {
                 fieldErrors.put(error.getField(), error.getDefaultMessage()));
 
         return ResponseEntity.badRequest().body(body(HttpStatus.BAD_REQUEST, "Validation échouée", fieldErrors));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, Object>> handleUnreadableBody(HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest().body(body(HttpStatus.BAD_REQUEST, "Corps de la requête manquant ou invalide", null));
     }
 
     @ExceptionHandler({TransactionNotFoundException.class, DeviceNotFoundException.class, SimSlotNotFoundException.class})

@@ -29,6 +29,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Le forward interne de Tomcat vers /error (rendu des réponses d'erreur,
+                        // ex. HttpMessageNotReadableException) est une NOUVELLE requête qui retraverse
+                        // ce filtre — sans permitAll ici, elle est vue comme anonyme et rejetée en 403
+                        // vide, masquant le vrai code/corps d'erreur derrière un 403 trompeur.
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/transactions/*/status").hasRole("DEVICE")
                         .requestMatchers(HttpMethod.PATCH, "/api/devices/*").hasRole("DEVICE")
