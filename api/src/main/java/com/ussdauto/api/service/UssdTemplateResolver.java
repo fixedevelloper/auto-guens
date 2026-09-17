@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 
 /**
- * Résout le code USSD à composer pour un (operator, operationType) donné — chaque
- * opérateur ayant un menu USSD marchand distinct pour DEPOSIT et pour WITHDRAW.
+ * Résout le code USSD à composer pour un (operator, operationType, countryCode) donné —
+ * chaque opérateur ayant un menu USSD marchand distinct pour DEPOSIT et pour WITHDRAW,
+ * et différent d'un pays à l'autre pour un même operator (ex. MTN Cameroun vs MTN Congo).
  */
 @Service
 @RequiredArgsConstructor
@@ -20,10 +21,10 @@ public class UssdTemplateResolver {
 
     private final UssdTemplateRepository ussdTemplateRepository;
 
-    public String resolve(Operator operator, OperationType operationType, BigDecimal amount, String phone) {
+    public String resolve(Operator operator, OperationType operationType, String countryCode, BigDecimal amount, String phone) {
         UssdTemplate template = ussdTemplateRepository
-                .findByOperatorAndOperationTypeAndActifTrue(operator, operationType)
-                .orElseThrow(() -> new UssdTemplateNotFoundException(operator, operationType));
+                .findByOperatorAndOperationTypeAndCountryCodeAndActifTrue(operator, operationType, countryCode)
+                .orElseThrow(() -> new UssdTemplateNotFoundException(operator, operationType, countryCode));
 
         return template.resolve(amount.toPlainString(), phone);
     }

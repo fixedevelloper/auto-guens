@@ -11,9 +11,15 @@ import java.util.UUID;
 
 public interface UssdTemplateRepository extends JpaRepository<UssdTemplate, UUID> {
 
-    Optional<UssdTemplate> findByOperatorAndOperationTypeAndActifTrue(Operator operator, OperationType operationType);
+    Optional<UssdTemplate> findByOperatorAndOperationTypeAndCountryCodeAndActifTrue(
+            Operator operator, OperationType operationType, String countryCode);
 
     List<UssdTemplate> findByOperator(Operator operator);
 
+    List<UssdTemplate> findByOperatorAndCountryCode(Operator operator, String countryCode);
+
     List<UssdTemplate> findByOperatorAndOperationType(Operator operator, OperationType operationType);
+
+    List<UssdTemplate> findByOperatorAndOperationTypeAndCountryCode(
+            Operator operator, OperationType operationType, String countryCode);
 }

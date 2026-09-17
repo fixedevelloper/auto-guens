@@ -43,7 +43,7 @@ public class TransactionService {
     @Transactional
     public Transaction createTransaction(CreateTransactionRequest request) {
         String ussdCode = ussdTemplateResolver.resolve(
-                request.operator(), request.operationType(), request.amount(), request.phone());
+                request.operator(), request.operationType(), request.countryCode(), request.amount(), request.phone());
 
         DeviceAssignment assignment = deviceSelectionService.selectAndReserveDevice(request.operator());
         Device device = assignment.device();

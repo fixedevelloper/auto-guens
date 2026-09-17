@@ -13,9 +13,10 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
- * Un seul template ACTIF par (operator, operationType) — appliqué en base via un index
- * unique partiel (voir db/schema-extra.sql), pas via une contrainte JPA classique, pour
- * pouvoir conserver l'historique des versions désactivées.
+ * Un seul template ACTIF par (operator, operationType, countryCode) — appliqué en base
+ * via un index unique partiel (voir db/schema-extra.sql), pas via une contrainte JPA
+ * classique, pour pouvoir conserver l'historique des versions désactivées. Un même
+ * operator (ex. MTN) a un code USSD marchand différent selon le pays.
  */
 @Entity
 @Table(name = "ussd_template")
@@ -37,6 +38,10 @@ public class UssdTemplate {
     @Enumerated(EnumType.STRING)
     @Column(name = "operation_type", nullable = false)
     private OperationType operationType;
+
+    /** ISO 3166-1 alpha-2, ex: "CM" — même convention que Transaction.countryCode. */
+    @Column(name = "country_code", nullable = false, length = 2)
+    private String countryCode;
 
     /** Ex: "*126*1*{amount}*{phone}#" */
     @Column(nullable = false)

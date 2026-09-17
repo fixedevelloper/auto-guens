@@ -35,9 +35,10 @@ public class UssdTemplateController {
     @GetMapping
     public List<UssdTemplateResponse> list(
             @RequestParam Operator operator,
-            @RequestParam(required = false) OperationType operationType
+            @RequestParam(required = false) OperationType operationType,
+            @RequestParam(required = false) String countryCode
     ) {
-        return ussdTemplateService.list(operator, operationType).stream().map(ussdTemplateMapper::toResponse).toList();
+        return ussdTemplateService.list(operator, operationType, countryCode).stream().map(ussdTemplateMapper::toResponse).toList();
     }
 
     @PutMapping("/{id}")

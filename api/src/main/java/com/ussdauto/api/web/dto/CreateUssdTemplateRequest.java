@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 public record CreateUssdTemplateRequest(
         @NotNull(message = "operator est obligatoire") Operator operator,
         @NotNull(message = "operationType est obligatoire") OperationType operationType,
+        @NotBlank(message = "countryCode est obligatoire") String countryCode,
         @NotBlank(message = "template est obligatoire") String template
 ) {
 }

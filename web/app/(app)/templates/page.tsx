@@ -30,6 +30,7 @@ export default async function TemplatesPage() {
             <tr>
               <th className="px-4 py-2">Opérateur</th>
               <th className="px-4 py-2">Opération</th>
+              <th className="px-4 py-2">Pays</th>
               <th className="px-4 py-2">Template</th>
               <th className="px-4 py-2">État</th>
               <th className="px-4 py-2">Mis à jour</th>
@@ -42,7 +43,7 @@ export default async function TemplatesPage() {
             ))}
             {templates.length === 0 && !error && (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-slate-400">
+                <td colSpan={7} className="px-4 py-6 text-center text-slate-400">
                   Aucun template
                 </td>
               </tr>

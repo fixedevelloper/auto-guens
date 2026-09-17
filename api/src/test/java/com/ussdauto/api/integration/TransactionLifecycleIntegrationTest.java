@@ -85,9 +85,9 @@ class TransactionLifecycleIntegrationTest {
                 .lastSeenAt(Instant.now())
                 .build());
 
-        createUssdTemplate("MTN", "DEPOSIT", "*126*1*{amount}*{phone}#");
-        createUssdTemplate("MTN", "WITHDRAW", "*126*2*{amount}*{phone}#");
-        createUssdTemplate("ORANGE", "DEPOSIT", "#150*50*{amount}*{phone}#");
+        createUssdTemplate("MTN", "DEPOSIT", "CM", "*126*1*{amount}*{phone}#");
+        createUssdTemplate("MTN", "WITHDRAW", "CM", "*126*2*{amount}*{phone}#");
+        createUssdTemplate("ORANGE", "DEPOSIT", "CM", "#150*50*{amount}*{phone}#");
 
         replaceSimSlots(deviceId, "[{\"slotIndex\":0,\"operator\":\"MTN\",\"phoneNumberOnSim\":\"677000000\"}]");
     }
@@ -230,9 +230,9 @@ class TransactionLifecycleIntegrationTest {
                 .andExpect(status().isOk());
     }
 
-    private void createUssdTemplate(String operator, String operationType, String template) throws Exception {
-        String body = "{\"operator\":\"%s\",\"operationType\":\"%s\",\"template\":\"%s\"}"
-                .formatted(operator, operationType, template);
+    private void createUssdTemplate(String operator, String operationType, String countryCode, String template) throws Exception {
+        String body = "{\"operator\":\"%s\",\"operationType\":\"%s\",\"countryCode\":\"%s\",\"template\":\"%s\"}"
+                .formatted(operator, operationType, countryCode, template);
 
         mockMvc.perform(post("/api/ussd-templates")
                         .header("X-Api-Key", MERCHANT_KEY)

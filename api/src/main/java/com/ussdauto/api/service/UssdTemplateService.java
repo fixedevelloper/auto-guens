@@ -20,10 +20,12 @@ public class UssdTemplateService {
 
     private final UssdTemplateRepository ussdTemplateRepository;
 
-    /** Désactive l'ancien template actif du couple (operator, operationType), s'il existe. */
+    /** Désactive l'ancien template actif du triplet (operator, operationType, countryCode),
+     * s'il existe. */
     @Transactional
     public UssdTemplate create(CreateUssdTemplateRequest request) {
-        ussdTemplateRepository.findByOperatorAndOperationTypeAndActifTrue(request.operator(), request.operationType())
+        ussdTemplateRepository.findByOperatorAndOperationTypeAndCountryCodeAndActifTrue(
+                        request.operator(), request.operationType(), request.countryCode())
                 .ifPresent(previous -> {
                     previous.setActif(false);
                     ussdTemplateRepository.save(previous);
@@ -32,6 +34,7 @@ public class UssdTemplateService {
         UssdTemplate template = UssdTemplate.builder()
                 .operator(request.operator())
                 .operationType(request.operationType())
+                .countryCode(request.countryCode())
                 .template(request.template())
                 .actif(true)
                 .build();
@@ -40,9 +43,15 @@ public class UssdTemplateService {
     }
 
     @Transactional(readOnly = true)
-    public List<UssdTemplate> list(Operator operator, OperationType operationType) {
+    public List<UssdTemplate> list(Operator operator, OperationType operationType, String countryCode) {
+        if (operationType != null && countryCode != null) {
+            return ussdTemplateRepository.findByOperatorAndOperationTypeAndCountryCode(operator, operationType, countryCode);
+        }
         if (operationType != null) {
             return ussdTemplateRepository.findByOperatorAndOperationType(operator, operationType);
+        }
+        if (countryCode != null) {
+            return ussdTemplateRepository.findByOperatorAndCountryCode(operator, countryCode);
         }
         return ussdTemplateRepository.findByOperator(operator);
     }

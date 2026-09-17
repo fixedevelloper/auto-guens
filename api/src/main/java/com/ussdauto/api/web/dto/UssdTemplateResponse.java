@@ -10,6 +10,7 @@ public record UssdTemplateResponse(
         UUID id,
         Operator operator,
         OperationType operationType,
+        String countryCode,
         String template,
         boolean actif,
         Instant createdAt,

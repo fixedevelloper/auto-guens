@@ -198,19 +198,25 @@ valeurs sont rejetées en `400`, réservées à l'API elle-même).
 
 ### Templates USSD
 
+Un même `operator` (ex. MTN) a un code USSD marchand différent selon le pays — la clé de
+résolution est `(operator, operationType, countryCode)`, pas juste `(operator,
+operationType)`.
+
 ```http
 POST /api/ussd-templates
 X-Api-Key: une-cle-secrete-longue
-{ "operator": "MTN", "operationType": "DEPOSIT", "template": "*126*1*{amount}*{phone}#" }
+{ "operator": "MTN", "operationType": "DEPOSIT", "countryCode": "CM", "template": "*126*1*{amount}*{phone}#" }
 
-GET /api/ussd-templates?operator=MTN[&operationType=DEPOSIT]
+GET /api/ussd-templates?operator=MTN[&operationType=DEPOSIT][&countryCode=CM]
 
 PUT /api/ussd-templates/{id}
 { "template": "*126*1*{amount}*{phone}#", "actif": true }
 ```
 
-Créer un nouveau template pour un couple `(operator, operationType)` désactive
-automatiquement l'ancien template actif de ce couple (l'historique reste consultable).
+Créer un nouveau template pour un triplet `(operator, operationType, countryCode)`
+désactive automatiquement l'ancien template actif de ce triplet (l'historique reste
+consultable) — un template MTN/DEPOSIT/CM et un MTN/DEPOSIT/CG coexistent sans se
+désactiver l'un l'autre. `PUT` ne modifie que `template`/`actif`, pas la clé.
 
 ### Devices
 

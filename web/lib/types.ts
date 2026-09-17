@@ -80,6 +80,7 @@ export interface UssdTemplate {
   id: string;
   operator: Operator;
   operationType: OperationType;
+  countryCode: string;
   template: string;
   actif: boolean;
   createdAt: string;

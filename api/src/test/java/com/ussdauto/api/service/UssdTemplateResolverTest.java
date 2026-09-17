@@ -32,14 +32,15 @@ class UssdTemplateResolverTest {
         UssdTemplate template = UssdTemplate.builder()
                 .operator(Operator.MTN)
                 .operationType(OperationType.DEPOSIT)
+                .countryCode("CM")
                 .template("*126*1*{amount}*{phone}#")
                 .actif(true)
                 .build();
 
-        when(ussdTemplateRepository.findByOperatorAndOperationTypeAndActifTrue(Operator.MTN, OperationType.DEPOSIT))
+        when(ussdTemplateRepository.findByOperatorAndOperationTypeAndCountryCodeAndActifTrue(Operator.MTN, OperationType.DEPOSIT, "CM"))
                 .thenReturn(Optional.of(template));
 
-        String ussdCode = ussdTemplateResolver.resolve(Operator.MTN, OperationType.DEPOSIT, new BigDecimal("5000"), "677000000");
+        String ussdCode = ussdTemplateResolver.resolve(Operator.MTN, OperationType.DEPOSIT, "CM", new BigDecimal("5000"), "677000000");
 
         assertThat(ussdCode).isEqualTo("*126*1*5000*677000000#");
     }
@@ -49,24 +50,43 @@ class UssdTemplateResolverTest {
         UssdTemplate template = UssdTemplate.builder()
                 .operator(Operator.MTN)
                 .operationType(OperationType.WITHDRAW)
+                .countryCode("CM")
                 .template("*126*2*{amount}*{phone}#")
                 .actif(true)
                 .build();
 
-        when(ussdTemplateRepository.findByOperatorAndOperationTypeAndActifTrue(Operator.MTN, OperationType.WITHDRAW))
+        when(ussdTemplateRepository.findByOperatorAndOperationTypeAndCountryCodeAndActifTrue(Operator.MTN, OperationType.WITHDRAW, "CM"))
                 .thenReturn(Optional.of(template));
 
-        String ussdCode = ussdTemplateResolver.resolve(Operator.MTN, OperationType.WITHDRAW, new BigDecimal("2000"), "677000000");
+        String ussdCode = ussdTemplateResolver.resolve(Operator.MTN, OperationType.WITHDRAW, "CM", new BigDecimal("2000"), "677000000");
 
         assertThat(ussdCode).isEqualTo("*126*2*2000*677000000#");
     }
 
     @Test
-    void throwsWhenNoActiveTemplateForOperatorAndOperationType() {
-        when(ussdTemplateRepository.findByOperatorAndOperationTypeAndActifTrue(Operator.ORANGE, OperationType.DEPOSIT))
+    void resolvesDifferentTemplateForSameOperatorInAnotherCountry() {
+        UssdTemplate template = UssdTemplate.builder()
+                .operator(Operator.MTN)
+                .operationType(OperationType.DEPOSIT)
+                .countryCode("CG")
+                .template("*105*1*{amount}*{phone}#")
+                .actif(true)
+                .build();
+
+        when(ussdTemplateRepository.findByOperatorAndOperationTypeAndCountryCodeAndActifTrue(Operator.MTN, OperationType.DEPOSIT, "CG"))
+                .thenReturn(Optional.of(template));
+
+        String ussdCode = ussdTemplateResolver.resolve(Operator.MTN, OperationType.DEPOSIT, "CG", new BigDecimal("5000"), "060000000");
+
+        assertThat(ussdCode).isEqualTo("*105*1*5000*060000000#");
+    }
+
+    @Test
+    void throwsWhenNoActiveTemplateForOperatorAndOperationTypeAndCountry() {
+        when(ussdTemplateRepository.findByOperatorAndOperationTypeAndCountryCodeAndActifTrue(Operator.ORANGE, OperationType.DEPOSIT, "CM"))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> ussdTemplateResolver.resolve(Operator.ORANGE, OperationType.DEPOSIT, BigDecimal.TEN, "690000000"))
+        assertThatThrownBy(() -> ussdTemplateResolver.resolve(Operator.ORANGE, OperationType.DEPOSIT, "CM", BigDecimal.TEN, "690000000"))
                 .isInstanceOf(UssdTemplateNotFoundException.class);
     }
 }

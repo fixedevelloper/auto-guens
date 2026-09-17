@@ -15,6 +15,7 @@ export async function createUssdTemplateAction(
 ): Promise<UssdTemplateFormState> {
   const operator = String(formData.get("operator") ?? "") as Operator;
   const operationType = String(formData.get("operationType") ?? "") as OperationType;
+  const countryCode = String(formData.get("countryCode") ?? "").trim().toUpperCase();
   const template = String(formData.get("template") ?? "").trim();
 
   if (operator !== "MTN" && operator !== "ORANGE") {
@@ -23,12 +24,15 @@ export async function createUssdTemplateAction(
   if (operationType !== "DEPOSIT" && operationType !== "WITHDRAW") {
     return { error: "Type d'opération invalide" };
   }
+  if (!/^[A-Z]{2}$/.test(countryCode)) {
+    return { error: "countryCode doit être un code ISO à 2 lettres (ex: CM)" };
+  }
   if (!template) {
     return { error: "Le template est obligatoire" };
   }
 
   try {
-    await apiPost<UssdTemplate>("/api/ussd-templates", { operator, operationType, template });
+    await apiPost<UssdTemplate>("/api/ussd-templates", { operator, operationType, countryCode, template });
     revalidatePath("/templates");
     return { success: true };
   } catch (e) {

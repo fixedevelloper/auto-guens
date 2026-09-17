@@ -31,6 +31,17 @@ export default function CreateTemplateForm() {
             <option value="WITHDRAW">WITHDRAW</option>
           </select>
         </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-xs font-medium text-slate-500">Pays (ISO 2)</span>
+          <input
+            type="text"
+            name="countryCode"
+            required
+            maxLength={2}
+            placeholder="CM"
+            className="w-16 rounded-md border border-slate-300 px-2 py-1.5 uppercase"
+          />
+        </label>
         <label className="flex flex-1 min-w-64 flex-col gap-1">
           <span className="text-xs font-medium text-slate-500">Template (placeholders {"{amount}"} / {"{phone}"})</span>
           <input

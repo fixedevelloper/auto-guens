@@ -12,6 +12,7 @@ public class UssdTemplateMapper {
                 template.getId(),
                 template.getOperator(),
                 template.getOperationType(),
+                template.getCountryCode(),
                 template.getTemplate(),
                 template.isActif(),
                 template.getCreatedAt(),

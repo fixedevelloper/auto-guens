@@ -25,6 +25,7 @@ export default function TemplateRow({ template }: { template: UssdTemplate }) {
       <tr className={template.actif ? "" : "opacity-50"}>
         <td className="px-4 py-2">{template.operator}</td>
         <td className="px-4 py-2">{template.operationType}</td>
+        <td className="px-4 py-2">{template.countryCode}</td>
         <td className="px-4 py-2 font-mono text-xs">{template.template}</td>
         <td className="px-4 py-2">{template.actif ? "actif" : "inactif"}</td>
         <td className="px-4 py-2 text-slate-500">{formatDate(template.updatedAt)}</td>
@@ -45,7 +46,8 @@ export default function TemplateRow({ template }: { template: UssdTemplate }) {
     <tr>
       <td className="px-4 py-2">{template.operator}</td>
       <td className="px-4 py-2">{template.operationType}</td>
-      <td className="px-4 py-2" colSpan={4}>
+      <td className="px-4 py-2">{template.countryCode}</td>
+      <td className="px-4 py-2" colSpan={3}>
         <form action={formAction} className="flex flex-wrap items-center gap-2 text-sm">
           <input
             type="text"
