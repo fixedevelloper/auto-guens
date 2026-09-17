@@ -20,8 +20,8 @@ COPY --from=build /build/public ./public
 
 USER nextjs
 
-ENV PORT=3000
+ENV PORT=3030
 ENV HOSTNAME=0.0.0.0
-EXPOSE 3000
+EXPOSE 3030
 
 CMD ["node", "server.js"]
