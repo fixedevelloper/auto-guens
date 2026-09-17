@@ -3,12 +3,15 @@
 `docker-compose.yml` de production : API (image publiée par `api-cd.yml`) + PostgreSQL.
 
 Le reverse proxy public (TLS/Certbot compris) est le **Nginx système** du serveur, pas un
-service dockerisé — l'API n'est publiée que sur `127.0.0.1:${API_PORT}` (par défaut
-`8080`), jamais sur `0.0.0.0`. Exemple de bloc `location` côté Nginx système :
+service dockerisé — l'API n'est publiée que sur `127.0.0.1:${API_PORT}`, jamais sur
+`0.0.0.0`. `API_PORT` doit être identique à `server.port` dans
+`api/src/main/resources/application.yml` (actuellement **8089** sur ce serveur — le 8080
+par défaut de Spring Boot y est déjà occupé par un autre service). Exemple de bloc
+`location` côté Nginx système :
 
 ```nginx
 location / {
-    proxy_pass http://127.0.0.1:8080;
+    proxy_pass http://127.0.0.1:8089;
     proxy_set_header Host              $host;
     proxy_set_header X-Real-IP         $remote_addr;
     proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
@@ -16,7 +19,7 @@ location / {
 }
 
 location /actuator/health {
-    proxy_pass http://127.0.0.1:8080/actuator/health;
+    proxy_pass http://127.0.0.1:8089/actuator/health;
     access_log off;
 }
 ```

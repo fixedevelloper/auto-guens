@@ -34,7 +34,7 @@ services:
     volumes:
       - ${FIREBASE_CREDENTIALS_FILE}:/run/secrets/firebase-service-account.json:ro
     ports:
-      - "127.0.0.1:${API_PORT:-8080}:8080"
+      - "127.0.0.1:${API_PORT:-8089}:8089"
     networks:
       - internal
 
