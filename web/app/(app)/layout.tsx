@@ -14,6 +14,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <Link href="/devices" className="hover:text-slate-900">
               Devices &amp; SIM
             </Link>
+            <Link href="/templates" className="hover:text-slate-900">
+              Templates USSD
+            </Link>
           </nav>
           <form action={logout}>
             <button type="submit" className="text-sm text-slate-500 hover:text-slate-900">

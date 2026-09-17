@@ -75,3 +75,13 @@ export interface SimSlot {
   actif: boolean;
   updatedAt: string;
 }
+
+export interface UssdTemplate {
+  id: string;
+  operator: Operator;
+  operationType: OperationType;
+  template: string;
+  actif: boolean;
+  createdAt: string;
+  updatedAt: string;
+}

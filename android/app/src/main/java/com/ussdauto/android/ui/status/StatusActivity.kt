@@ -70,20 +70,23 @@ class StatusActivity : ComponentActivity() {
 
     private val viewModel: StatusViewModel by viewModels()
 
-    private val requestPhoneStatePermission = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        if (!granted) {
-            Timber.w("READ_PHONE_STATE refusée : la détection automatique des SIM ne fonctionnera pas")
+    private val requestRuntimePermissions = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { results ->
+        results.forEach { (permission, granted) ->
+            if (!granted) {
+                Timber.w("Permission refusée : %s — fonctionnalité associée indisponible", permission)
+            }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPhoneStatePermission.launch(Manifest.permission.READ_PHONE_STATE)
+        val missingPermissions = REQUIRED_RUNTIME_PERMISSIONS.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+        if (missingPermissions.isNotEmpty()) {
+            requestRuntimePermissions.launch(missingPermissions.toTypedArray())
         }
         setContent {
             UssdAutomationTheme {
@@ -91,6 +94,18 @@ class StatusActivity : ComponentActivity() {
                 StatusScreen(state)
             }
         }
+    }
+
+    private companion object {
+        /** Permissions "dangereuses" déclarées dans le manifest mais qui exigent en plus une
+         * demande explicite à l'exécution (Android 6+), sans quoi les appels correspondants
+         * (sendUssdRequest, réception SMS...) lèvent un SecurityException au runtime. */
+        val REQUIRED_RUNTIME_PERMISSIONS = arrayOf(
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.CALL_PHONE,
+            Manifest.permission.RECEIVE_SMS,
+            Manifest.permission.READ_SMS
+        )
     }
 }
 
